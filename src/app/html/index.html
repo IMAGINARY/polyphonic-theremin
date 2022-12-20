@@ -132,10 +132,23 @@
         };
       }
 
+      function interpolateFrequencyLogarithmic(t) {
+        const logFrequencyMinHz = Math.log2(frequencyMinHz);
+        const logFrequencyMaxHz = Math.log2(frequencyMaxHz);
+        const logFrequencyHz =
+          logFrequencyMinHz + (logFrequencyMaxHz - logFrequencyMinHz) * t;
+        return Math.pow(2.0, logFrequencyHz);
+      }
+
+      function interpolateFrequencyLinear(t) {
+        return frequencyMinHz + (frequencyMaxHz - frequencyMinHz) * t;
+      }
+
+      let interpolateFrequency = interpolateFrequencyLogarithmic;
+
       function getToneParams(relX, relY) {
         const gain = gainMin + (gainMax - gainMin) * relX;
-        const frequency =
-          frequencyMinHz + (frequencyMaxHz - frequencyMinHz) * (1 - relY);
+        const frequency = interpolateFrequency(1 - relY);
         return { gain, frequency };
       }
 
