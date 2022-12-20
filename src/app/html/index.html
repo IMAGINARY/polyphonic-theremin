@@ -101,49 +101,78 @@
       const gainMax = 0.3;
       const frequencyMinHz = 65;
       const frequencyMaxHz = 3000;
+      const attackMs = 10;
+      const releaseMs = 200;
+
       const tones = {};
 
       // create web audio api context
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
       function createTone() {
+        // create envelope Gain node
+        const envelopeGainNode = audioCtx.createGain();
+        envelopeGainNode.gain.value = 0;
+        envelopeGainNode.connect(audioCtx.destination);
+
         // create Gain node
         const gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0;
-        gainNode.connect(audioCtx.destination);
+        gainNode.connect(envelopeGainNode);
 
         // create variable-frequency Oscillator node
         const oscillatorNode = audioCtx.createOscillator();
         oscillatorNode.type = waveType;
-        oscillatorNode.frequency.value = 0;
         oscillatorNode.connect(gainNode);
         oscillatorNode.start();
 
         return {
+          envelopeGainNode,
           gainNode,
           oscillatorNode,
         };
       }
 
-      function addTone(id) {
+      function getToneParams(relX, relY) {
+        const gain = gainMin + (gainMax - gainMin) * relX;
+        const frequency =
+          frequencyMinHz + (frequencyMaxHz - frequencyMinHz) * (1 - relY);
+        return { gain, frequency };
+      }
+
+      function addTone(id, relX, relY) {
         const tone = createTone();
+        const { envelopeGainNode, gainNode, oscillatorNode } = tone;
+        const { gain, frequency } = getToneParams(relX, relY);
+        const attackTimestamp = audioCtx.currentTime + attackMs / 1000;
+        envelopeGainNode.gain.linearRampToValueAtTime(1.0, attackTimestamp);
+        gainNode.gain.value = gain;
+        oscillatorNode.frequency.value = frequency;
+
         removeTone(id);
         tones[`${id}`] = tone;
       }
 
-      function updateTone(id, relX, relY) {
+      function updateTone(id, relX, relY, durationMs) {
         audioCtx.resume();
 
         const toneKey = `${id}`;
         const tone = tones[toneKey];
         if (!tone) return;
 
+        const { gain, frequency } = getToneParams(relX, relY);
         const { gainNode, oscillatorNode } = tone;
-        const gain = gainMin + (gainMax - gainMin) * relX;
-        const frequency =
-          frequencyMinHz + (frequencyMaxHz - frequencyMinHz) * (1 - relY);
-        gainNode.gain.value = gain;
-        oscillatorNode.frequency.value = frequency;
+        if (durationMs <= 0) {
+          gainNode.gain.value = gain;
+          oscillatorNode.frequency = frequency;
+        } else {
+          const updateDoneTimestamp =
+            audioCtx.currentTime + durationMs / 1000.0;
+          gainNode.gain.linearRampToValueAtTime(gain, updateDoneTimestamp);
+          oscillatorNode.frequency.linearRampToValueAtTime(
+            frequency,
+            updateDoneTimestamp
+          );
+        }
       }
 
       function removeTone(id) {
@@ -151,10 +180,14 @@
         const tone = tones[toneKey];
         if (!tone) return;
 
-        const { gainNode, oscillatorNode } = tone;
-        gainNode.disconnect();
-        oscillatorNode.stop();
-        oscillatorNode.disconnect();
+        const { envelopeGainNode, gainNode, oscillatorNode } = tone;
+        const decayTimestamp = audioCtx.currentTime + releaseMs / 1000;
+        envelopeGainNode.gain.linearRampToValueAtTime(0.0, decayTimestamp);
+        setTimeout(() => {
+          gainNode.disconnect();
+          oscillatorNode.stop();
+          oscillatorNode.disconnect();
+        }, releaseMs);
 
         delete tones[toneKey];
       }
@@ -194,8 +227,7 @@
 
         container.append(elem);
 
-        addTone(pe.pointerId);
-        updateTone(pe.pointerId, relX, relY);
+        addTone(pe.pointerId, relX, relY);
 
         updatePointer(pe);
       }
@@ -207,7 +239,7 @@
         const elems = container.querySelectorAll(`.pointer-${id}`);
         const { x, y, relX, relY } = getRelativePointerPosition(pe, container);
         elems.forEach((e) => setPosition(e, x, y));
-        updateTone(id, relX, relY);
+        updateTone(id, relX, relY, 10);
       }
 
       function removePointer(pe) {
@@ -240,29 +272,29 @@
 
       if (document.fullscreenEnabled) {
         const fullscreenIconSvg = `
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  className="bi bi-fullscreen"
-  viewBox="0 0 16 16"
->
-  <path
-    d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"
-  />
-</svg>
-`;
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        className="bi bi-fullscreen"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"
+        />
+      </svg>
+      `;
         const fullscreenExitIconSvg = `
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  class="bi bi-fullscreen-exit"
-  viewBox="0 0 16 16"
->
-  <path
-    d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z"
-  />
-</svg>
-`;
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        class="bi bi-fullscreen-exit"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z"
+        />
+      </svg>
+      `;
         const fullscreenIcon = createElementFromHTML(fullscreenIconSvg);
         const fullscreenExitIcon = createElementFromHTML(fullscreenExitIconSvg);
         fullscreenIcon.classList.add("grow");
