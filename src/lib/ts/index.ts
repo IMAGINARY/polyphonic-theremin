@@ -1,4 +1,3 @@
-const helloWorld = "Hello World!"
+import PolyphonicTheremin from './polyphonic-theremin';
 
-
-export default helloWorld;
+export default PolyphonicTheremin;

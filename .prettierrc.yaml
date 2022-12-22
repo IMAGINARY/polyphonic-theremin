@@ -4,3 +4,10 @@ quoteProps: consistent
 singleQuote: true
 trailingComma: all
 proseWrap: always
+overrides:
+  - files: '*.parcelrc'
+    options:
+      parser: json
+  - files: '*.svg'
+    options:
+      parser: html

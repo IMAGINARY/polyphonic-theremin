@@ -36,6 +36,9 @@ module.exports = {
 
         'import/prefer-default-export': 'off',
       },
+      settings: {
+        polyfills: ['AudioContext'],
+      },
     },
   ],
 };

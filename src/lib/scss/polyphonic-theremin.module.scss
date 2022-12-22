@@ -1,0 +1,29 @@
+.pane {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  touch-action: none;
+  box-sizing: border-box;
+}
+
+.pane * {
+  touch-action: none;
+}
+
+.pointer {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.pointer > * {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 4px solid lightgray;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+}
