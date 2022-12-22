@@ -51,6 +51,8 @@ class Tones {
 
   protected toneObjects: Map<number, ToneDataWithNodes>;
 
+  protected releasingToneObjects: Set<ToneDataWithNodes>;
+
   protected audioContext: AudioContext;
 
   protected needsRefresh: boolean;
@@ -72,6 +74,7 @@ class Tones {
     });
 
     this.toneObjects = new Map();
+    this.releasingToneObjects = new Set();
     this.audioContext = new AudioContext();
     this.needsRefresh = false;
   }
@@ -187,9 +190,15 @@ class Tones {
       gainNode.disconnect();
       oscillatorNode.stop();
       oscillatorNode.disconnect();
+      this.releasingToneObjects.delete(toneData);
+
+      const tonesLeftPlaying =
+        this.toneObjects.size + this.releasingToneObjects.size;
+      if (tonesLeftPlaying === 0) this.audioContext.suspend().catch(() => {});
     }, releaseMs);
 
     this.toneObjects.delete(id);
+    this.releasingToneObjects.add(toneData);
   }
 
   refresh() {
