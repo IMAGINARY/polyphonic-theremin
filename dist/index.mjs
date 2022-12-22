@@ -1,12 +1,39 @@
 import "./index.css";
 import $1xfY9$swchelperssrc_define_propertymjs from "@swc/helpers/src/_define_property.mjs";
 
-
-
-
-function $12f1dd3205f197c4$export$94df19ecb868bc1a(obj, k) {
-    return k in obj;
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
 }
+function $parcel$defineInteropFlag(a) {
+  Object.defineProperty(a, '__esModule', {value: true, configurable: true});
+}
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="declarations.d.ts"/>
+var $5659b36a18e30c2e$exports = {};
+
+$parcel$defineInteropFlag($5659b36a18e30c2e$exports);
+
+$parcel$export($5659b36a18e30c2e$exports, "defaultOptions", function () { return $5659b36a18e30c2e$export$ba43bf67f3d48107; });
+$parcel$export($5659b36a18e30c2e$exports, "default", function () { return $5659b36a18e30c2e$export$2e2bcd8739ae039; });
+$parcel$export($5659b36a18e30c2e$exports, "defaultToneOptions", function () { return $044ea5267f7f44ae$export$ba43bf67f3d48107; });
+
+var $f856531edfd933e8$exports = {};
+
+$parcel$export($f856531edfd933e8$exports, "ring", function () { return $f856531edfd933e8$export$e7d0da6968da5dd; }, function (v) { return $f856531edfd933e8$export$e7d0da6968da5dd = v; });
+$parcel$export($f856531edfd933e8$exports, "pane", function () { return $f856531edfd933e8$export$6dff30574f79a202; }, function (v) { return $f856531edfd933e8$export$6dff30574f79a202 = v; });
+$parcel$export($f856531edfd933e8$exports, "pointer", function () { return $f856531edfd933e8$export$b7fd2c2937973304; }, function (v) { return $f856531edfd933e8$export$b7fd2c2937973304 = v; });
+var $f856531edfd933e8$export$e7d0da6968da5dd;
+var $f856531edfd933e8$export$6dff30574f79a202;
+var $f856531edfd933e8$export$b7fd2c2937973304;
+$f856531edfd933e8$export$e7d0da6968da5dd = `GmrByW_ring`;
+$f856531edfd933e8$export$6dff30574f79a202 = `GmrByW_pane`;
+$f856531edfd933e8$export$b7fd2c2937973304 = `GmrByW_pointer`;
+
+
+
 function $12f1dd3205f197c4$export$5638338adfdf154f(t, min, max) {
     return min + (max - min) * t;
 }
@@ -35,10 +62,19 @@ function $12f1dd3205f197c4$export$79263550b33b988b(pe, elem) {
 }
 function $12f1dd3205f197c4$export$f9b088a47202d605(element, x, y) {
     const { style: style  } = element;
-    style.left = `${x}px`;
-    style.top = `${y}px`;
+    style.transform = `translate(${x}px, ${y}px)`;
 }
 const $12f1dd3205f197c4$export$fcbc63750ec2a81f = window.AudioContext || window.webkitAudioContext;
+/**
+ * This is a workaround for some browsers not supporting
+ * AudioParam.cancelAndHoldAtTime().
+ */ function $12f1dd3205f197c4$export$e204a5962a9c046d(audioParam, audioContext) {
+    const { currentTime: currentTime  } = audioContext;
+    const { value: value  } = audioParam;
+    audioParam.cancelScheduledValues(currentTime);
+    // eslint-disable-next-line no-param-reassign
+    audioParam.value = value;
+}
 
 
 function $044ea5267f7f44ae$var$extractToneData(toneDataExt) {
@@ -48,7 +84,7 @@ function $044ea5267f7f44ae$var$extractToneData(toneDataExt) {
         tFrequency: tFrequency
     };
 }
-const $044ea5267f7f44ae$export$c3f131c7971faff7 = {
+const $044ea5267f7f44ae$export$ba43bf67f3d48107 = {
     waveType: "square",
     gainMin: 0.01,
     gainMax: 0.3,
@@ -56,9 +92,21 @@ const $044ea5267f7f44ae$export$c3f131c7971faff7 = {
     frequencyMaxHz: 3000,
     attackMs: 10,
     releaseMs: 200,
-    updateMs: 10
+    updateMs: 10,
+    mute: false
 };
 class $044ea5267f7f44ae$var$Tones {
+    getOptions() {
+        return {
+            ...this._options
+        };
+    }
+    applyOptions(o) {
+        Object.assign(this._options, o);
+        // TODO: Optimize by updating only what actually changed.
+        this.applyMute();
+        this.refresh();
+    }
     getToneData() {
         const convertEntries = ([id, t])=>[
                 id,
@@ -77,12 +125,12 @@ class $044ea5267f7f44ae$var$Tones {
         // create envelope Gain node
         const envelopeGainNode = this.audioContext.createGain();
         envelopeGainNode.gain.value = 0;
-        envelopeGainNode.connect(this.audioContext.destination);
+        envelopeGainNode.connect(this.globalGain);
         // create Gain node
         const gainNode = this.audioContext.createGain();
         gainNode.connect(envelopeGainNode);
         // create variable-frequency Oscillator node
-        const { waveType: waveType  } = this.options;
+        const { waveType: waveType  } = this._options;
         const oscillatorNode = this.audioContext.createOscillator();
         oscillatorNode.type = waveType;
         oscillatorNode.connect(gainNode);
@@ -94,9 +142,9 @@ class $044ea5267f7f44ae$var$Tones {
         };
     }
     getToneParams(tGain, tFrequency) {
-        const { gainMin: gainMin , gainMax: gainMax  } = this.options;
+        const { gainMin: gainMin , gainMax: gainMax  } = this._options;
         const gain = (0, $12f1dd3205f197c4$export$5638338adfdf154f)(tGain, gainMin, gainMax);
-        const { frequencyMinHz: frequencyMinHz , frequencyMaxHz: frequencyMaxHz  } = this.options;
+        const { frequencyMinHz: frequencyMinHz , frequencyMaxHz: frequencyMaxHz  } = this._options;
         const frequency = (0, $12f1dd3205f197c4$export$61db5837c8aecee1)(tFrequency, frequencyMinHz, frequencyMaxHz);
         return {
             gain: gain,
@@ -107,7 +155,7 @@ class $044ea5267f7f44ae$var$Tones {
         const tone = this.createTone();
         const { envelopeGainNode: envelopeGainNode , gainNode: gainNode , oscillatorNode: oscillatorNode  } = tone;
         const { gain: gain , frequency: frequency  } = this.getToneParams(tGain, tFrequency);
-        const { attackMs: attackMs  } = this.options;
+        const { attackMs: attackMs  } = this._options;
         const attackTimestamp = this.audioContext.currentTime + attackMs / 1000;
         envelopeGainNode.gain.linearRampToValueAtTime(1.0, attackTimestamp);
         gainNode.gain.value = gain;
@@ -133,88 +181,98 @@ class $044ea5267f7f44ae$var$Tones {
         const { tGain: tGain , tFrequency: tFrequency  } = toneDataWithNodes;
         const { gain: gain , frequency: frequency  } = this.getToneParams(tGain, tFrequency);
         const { gainNode: gainNode , oscillatorNode: oscillatorNode  } = toneDataWithNodes;
-        const { updateMs: updateMs  } = this.options;
-        if (updateMs <= 0) {
-            gainNode.gain.value = gain;
-            oscillatorNode.frequency.value = frequency;
-        } else {
-            const updateDoneTimestamp = this.audioContext.currentTime + updateMs / 1000.0;
-            gainNode.gain.linearRampToValueAtTime(gain, updateDoneTimestamp);
-            oscillatorNode.frequency.linearRampToValueAtTime(frequency, updateDoneTimestamp);
-        }
+        const { updateMs: updateMs  } = this._options;
+        const { currentTime: currentTime  } = this.audioContext;
+        const updateDoneTimestamp = currentTime + updateMs / 1000.0;
+        const gainParam = gainNode.gain;
+        const frequencyParam = oscillatorNode.frequency;
+        (0, $12f1dd3205f197c4$export$e204a5962a9c046d)(gainParam, this.audioContext);
+        (0, $12f1dd3205f197c4$export$e204a5962a9c046d)(frequencyParam, this.audioContext);
+        gainParam.linearRampToValueAtTime(gain, updateDoneTimestamp);
+        var _frequencyParam_exponentialRampToValueAtTime_bind;
+        // Use exponential ramp if available and linear ramp otherwise.
+        const frequencyRamp = (_frequencyParam_exponentialRampToValueAtTime_bind = frequencyParam.exponentialRampToValueAtTime.bind(frequencyParam)) !== null && _frequencyParam_exponentialRampToValueAtTime_bind !== void 0 ? _frequencyParam_exponentialRampToValueAtTime_bind : frequencyParam.linearRampToValueAtTime.bind(frequencyParam);
+        frequencyRamp(frequency, updateDoneTimestamp);
     }
     remove(id) {
         const toneData = this.toneObjects.get(id);
         if (!toneData) return;
         const { envelopeGainNode: envelopeGainNode , gainNode: gainNode , oscillatorNode: oscillatorNode  } = toneData;
-        const { releaseMs: releaseMs  } = this.options;
+        const { releaseMs: releaseMs  } = this._options;
         const decayTimestamp = this.audioContext.currentTime + releaseMs / 1000;
         envelopeGainNode.gain.linearRampToValueAtTime(0.0, decayTimestamp);
         setTimeout(()=>{
+            envelopeGainNode.disconnect();
             gainNode.disconnect();
             oscillatorNode.stop();
             oscillatorNode.disconnect();
+            this.releasingToneObjects.delete(toneData);
+            const tonesLeftPlaying = this.toneObjects.size + this.releasingToneObjects.size;
+            if (tonesLeftPlaying === 0) this.audioContext.suspend().catch(()=>{});
         }, releaseMs);
         this.toneObjects.delete(id);
+        this.releasingToneObjects.add(toneData);
     }
     refresh() {
         [
             ...this.toneObjects.values()
         ].forEach((t)=>this.refreshNodes(t));
     }
-    scheduleRefresh() {
-        this.needsRefresh = true;
-        this.needsRefresh = true;
-        queueMicrotask(()=>this.refreshIfNeeded());
-    }
-    refreshIfNeeded() {
-        if (this.needsRefresh) {
-            this.refresh();
-            return true;
-        }
-        return false;
+    applyMute() {
+        const { currentTime: currentTime  } = this.audioContext;
+        const { gain: gain  } = this.globalGain;
+        const updateDoneTimestamp = currentTime + 0.02;
+        const targetGain = this._options.mute ? 0.0 : 1.0;
+        (0, $12f1dd3205f197c4$export$e204a5962a9c046d)(gain, this.audioContext);
+        gain.linearRampToValueAtTime(targetGain, updateDoneTimestamp);
     }
     constructor(options = {}){
-        (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "options", void 0);
+        (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "_options", void 0);
         (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "toneObjects", void 0);
+        (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "releasingToneObjects", void 0);
         (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "audioContext", void 0);
-        (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "needsRefresh", void 0);
-        const optionsWithDefaults = {
-            ...$044ea5267f7f44ae$export$c3f131c7971faff7,
+        (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "globalGain", void 0);
+        this._options = {
+            ...$044ea5267f7f44ae$export$ba43bf67f3d48107,
             ...options
         };
-        this.options = new Proxy(optionsWithDefaults, {
-            set: (target, key, newValue)=>{
-                // The TypeScript compiler already enforces the correct type on the Proxy level,
-                // so the following assignment is safe even if we can't determine the type of
-                // `newValue` statically.
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,no-param-reassign
-                target[key] = newValue;
-                if ((0, $12f1dd3205f197c4$export$94df19ecb868bc1a)(optionsWithDefaults, key)) {
-                    // update tones
-                    console.log("Update!!");
-                    this.scheduleRefresh();
-                }
-                return true;
-            }
-        });
         this.toneObjects = new Map();
+        this.releasingToneObjects = new Set();
         this.audioContext = new (0, $12f1dd3205f197c4$export$fcbc63750ec2a81f)();
-        this.needsRefresh = false;
+        this.globalGain = this.audioContext.createGain();
+        this.globalGain.gain.value = 0.0;
+        this.globalGain.connect(this.audioContext.destination);
+        this.applyMute();
     }
 }
 var $044ea5267f7f44ae$export$2e2bcd8739ae039 = $044ea5267f7f44ae$var$Tones;
 
 
 
+const $5659b36a18e30c2e$export$ba43bf67f3d48107 = {
+    touchElementCssClasses: [
+        (0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).ring
+    ],
+    touchElementStyle: ""
+};
 function $5659b36a18e30c2e$var$queryForPointerIdAll(parent, id) {
-    return parent.querySelectorAll(`.${(0, {}).pointer}[data-pointer-id="${id}"]`);
+    return parent.querySelectorAll(`.${(0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).pointer}[data-pointer-id="${id}"]`);
 }
 class $5659b36a18e30c2e$export$2e2bcd8739ae039 {
-    get options() {
-        return this.tones.options;
+    getOptions() {
+        return {
+            ...this._options
+        };
+    }
+    applyOptions(o) {
+        Object.assign(this._options, o);
+        this.refreshPointerElementCssAll();
+    }
+    getToneOptions() {
+        return this.tones.getOptions();
+    }
+    applyToneOptions(o) {
+        this.tones.applyOptions(o);
     }
     getHandlers() {
         return {
@@ -229,8 +287,9 @@ class $5659b36a18e30c2e$export$2e2bcd8739ae039 {
         this.pane.setPointerCapture(pe.pointerId);
         const { relX: relX , relY: relY  } = (0, $12f1dd3205f197c4$export$79263550b33b988b)(pe, this.pane);
         const internalElem = document.createElement("div");
+        this.refreshPointerElementCss(internalElem);
         const elem = document.createElement("div");
-        elem.classList.add((0, {}).pointer);
+        elem.classList.add((0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).pointer);
         elem.dataset.pointerId = `${pe.pointerId}`;
         elem.appendChild(internalElem);
         this.pane.append(elem);
@@ -251,15 +310,29 @@ class $5659b36a18e30c2e$export$2e2bcd8739ae039 {
         elems.forEach((e)=>e.remove());
         this.pane.releasePointerCapture(pe.pointerId);
         this.tones.remove(id);
-        if (this.tones.size) this.pane.removeEventListener("pointermove", this.handlers.updatePointer);
+        if (this.tones.size === 0) this.pane.removeEventListener("pointermove", this.handlers.updatePointer);
     }
-    constructor(element, options = {}){
+    refreshPointerElementCss(element) {
+        const { touchElementCssClasses: touchElementCssClasses , touchElementStyle: touchElementStyle  } = this._options;
+        element.classList.add(...touchElementCssClasses);
+        element.setAttribute("style", touchElementStyle);
+    }
+    refreshPointerElementCssAll() {
+        const elements = this.pane.querySelectorAll(`.${(0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).pointer} > *`);
+        elements.forEach(this.refreshPointerElementCss.bind(this));
+    }
+    constructor(element, options = {}, toneOptions = {}){
+        (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "_options", void 0);
         (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "tones", void 0);
         (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "handlers", this.getHandlers());
         (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "element", void 0);
         (0, $1xfY9$swchelperssrc_define_propertymjs)(this, "pane", void 0);
+        this._options = {
+            ...$5659b36a18e30c2e$export$ba43bf67f3d48107,
+            ...options
+        };
         const pane = document.createElement("div");
-        pane.classList.add((0, {}).pane);
+        pane.classList.add((0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).pane);
         pane.addEventListener("pointerdown", this.handlers.addPointer);
         pane.addEventListener("pointerup", this.handlers.removePointer);
         pane.addEventListener("pointercancel", this.handlers.removePointer);
@@ -268,13 +341,14 @@ class $5659b36a18e30c2e$export$2e2bcd8739ae039 {
         element.appendChild(pane);
         this.pane = pane;
         this.element = element;
-        this.tones = new (0, $044ea5267f7f44ae$export$2e2bcd8739ae039)(options);
+        this.tones = new (0, $044ea5267f7f44ae$export$2e2bcd8739ae039)(toneOptions);
     }
 }
+
 
 
 var $e8a6df3c5af17b1e$export$2e2bcd8739ae039 = (0, $5659b36a18e30c2e$export$2e2bcd8739ae039);
 
 
-export {$e8a6df3c5af17b1e$export$2e2bcd8739ae039 as default};
+export {$e8a6df3c5af17b1e$export$2e2bcd8739ae039 as default, $5659b36a18e30c2e$export$ba43bf67f3d48107 as defaultOptions, $044ea5267f7f44ae$export$ba43bf67f3d48107 as defaultOptions};
 //# sourceMappingURL=index.mjs.map
