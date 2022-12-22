@@ -54,7 +54,7 @@ export default class PolyphonicTheremin {
     };
   }
 
-  addPointer(pe: PointerEvent) {
+  protected addPointer(pe: PointerEvent) {
     this.removePointer(pe);
     this.pane.addEventListener('pointermove', this.handlers.updatePointer);
 
@@ -77,7 +77,7 @@ export default class PolyphonicTheremin {
     this.updatePointer(pe);
   }
 
-  updatePointer(pe: PointerEvent) {
+  protected updatePointer(pe: PointerEvent) {
     if (pe.buttons === 0) return;
 
     const id = pe.pointerId;
@@ -87,7 +87,7 @@ export default class PolyphonicTheremin {
     this.tones.update(id, relX, relY);
   }
 
-  removePointer(pe: PointerEvent) {
+  protected removePointer(pe: PointerEvent) {
     const id = pe.pointerId;
     const elems = queryForPointerIdAll<HTMLElement>(this.pane, id);
     elems.forEach((e) => e.remove());
