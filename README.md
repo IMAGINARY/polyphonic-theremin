@@ -5,7 +5,7 @@
 Install the package via `npm`:
 
 ```shell
-npm install polyphonic-theremin
+npm install @imaginary-maths/polyphonic-theremin
 ```
 
 ## Usage
