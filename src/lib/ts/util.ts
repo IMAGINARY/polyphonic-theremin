@@ -1,7 +1,3 @@
-function hasKey<T extends object>(obj: T, k: keyof never): k is keyof T {
-  return k in obj;
-}
-
 function interpolateLinear(t: number, min: number, max: number) {
   return min + (max - min) * t;
 }
@@ -44,7 +40,6 @@ function cancelAndHoldNow(audioParam: AudioParam, audioContext: AudioContext) {
 }
 
 export {
-  hasKey,
   interpolateLinear,
   interpolateLogarithmic,
   getRelativePointerPosition,

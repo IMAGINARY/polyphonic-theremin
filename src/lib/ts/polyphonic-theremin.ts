@@ -1,8 +1,19 @@
 import classes from '../scss/polyphonic-theremin.module.scss';
-import Tones, { ToneOptions } from './tones';
+import Tones, {
+  ToneOptions,
+  defaultOptions as defaultToneOptions,
+} from './tones';
 import { getRelativePointerPosition, setPosition } from './util';
 
-type PolyphonicThereminOptions = ToneOptions;
+type PolyphonicThereminOptions = {
+  touchElementCssClasses: string[];
+  touchElementStyle: string;
+};
+
+const defaultOptions: Readonly<PolyphonicThereminOptions> = {
+  touchElementCssClasses: [classes.ring],
+  touchElementStyle: '',
+};
 
 function queryForPointerIdAll<T extends Element>(
   parent: Element,
@@ -13,7 +24,9 @@ function queryForPointerIdAll<T extends Element>(
   );
 }
 
-export default class PolyphonicTheremin {
+class PolyphonicTheremin {
+  protected readonly _options: PolyphonicThereminOptions;
+
   protected tones: Tones;
 
   protected handlers = this.getHandlers();
@@ -25,7 +38,10 @@ export default class PolyphonicTheremin {
   constructor(
     element: Element,
     options: Partial<PolyphonicThereminOptions> = {},
+    toneOptions: Partial<ToneOptions> = {},
   ) {
+    this._options = { ...defaultOptions, ...options };
+
     const pane = document.createElement('div');
     pane.classList.add(classes.pane);
     pane.addEventListener('pointerdown', this.handlers.addPointer);
@@ -39,11 +55,24 @@ export default class PolyphonicTheremin {
     this.pane = pane;
     this.element = element;
 
-    this.tones = new Tones(options);
+    this.tones = new Tones(toneOptions);
   }
 
-  get options() {
-    return this.tones.options;
+  getOptions() {
+    return { ...this._options };
+  }
+
+  applyOptions(o: Partial<PolyphonicThereminOptions>) {
+    Object.assign(this._options, o);
+    this.refreshPointerElementCssAll();
+  }
+
+  getToneOptions(): ToneOptions {
+    return this.tones.getOptions();
+  }
+
+  applyToneOptions(o: Partial<ToneOptions>) {
+    this.tones.applyOptions(o);
   }
 
   protected getHandlers() {
@@ -63,7 +92,7 @@ export default class PolyphonicTheremin {
     const { relX, relY } = getRelativePointerPosition(pe, this.pane);
 
     const internalElem = document.createElement('div');
-    internalElem.classList.add(classes.ring);
+    this.refreshPointerElementCss(internalElem);
 
     const elem = document.createElement('div');
     elem.classList.add(classes.pointer);
@@ -98,4 +127,23 @@ export default class PolyphonicTheremin {
     if (this.tones.size === 0)
       this.pane.removeEventListener('pointermove', this.handlers.updatePointer);
   }
+
+  protected refreshPointerElementCss(element: Element) {
+    const { touchElementCssClasses, touchElementStyle } = this._options;
+    element.classList.add(...touchElementCssClasses);
+    element.setAttribute('style', touchElementStyle);
+  }
+
+  protected refreshPointerElementCssAll() {
+    const elements = this.pane.querySelectorAll(`.${classes.pointer} > *`);
+    elements.forEach(this.refreshPointerElementCss.bind(this));
+  }
 }
+
+export {
+  PolyphonicThereminOptions,
+  ToneOptions,
+  defaultOptions,
+  defaultToneOptions,
+};
+export default PolyphonicTheremin;
