@@ -183,6 +183,7 @@ class Tones {
     const decayTimestamp = this.audioContext.currentTime + releaseMs / 1000;
     envelopeGainNode.gain.linearRampToValueAtTime(0.0, decayTimestamp);
     setTimeout(() => {
+      envelopeGainNode.disconnect();
       gainNode.disconnect();
       oscillatorNode.stop();
       oscillatorNode.disconnect();
