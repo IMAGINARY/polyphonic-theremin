@@ -1,14 +1,16 @@
-# Typescript library with demo app
+# polyphonic-theremin
 
 ## Installation
 
 Install the package via `npm`:
 
 ```shell
-npm install <package-name>
+npm install polyphonic-theremin
 ```
 
 ## Usage
+
+Take a look at the `src` folder.
 
 ## Build
 
@@ -50,10 +52,10 @@ SCSS and Typescript.
 
 ## Credits
 
-Developed by <author-name> for <company-name>.
+Developed by Christian Stussak for IMAGINARY gGmbH.
 
 ## License
 
-Copyright © <year> <copyright-holder>
+Copyright © 2022 IMAGINARY gGmbH
 
 Licensed under the MIT license (see the [`LICENSE`](LICENSE) file).
