@@ -1,4 +1,4 @@
-import cssText from 'bundle-text:../../lib/scss/polyphonic-theremin.module.scss';
+import 'pepjs';
 import PolyphonicTheremin, {
   PolyphonicThereminOptions,
   ToneOptions,
