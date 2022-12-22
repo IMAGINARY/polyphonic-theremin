@@ -183,18 +183,13 @@ class Tones {
     const { gainNode, oscillatorNode } = toneDataWithNodes;
     const { updateMs } = this.options;
     const { currentTime } = this.audioContext;
-    gainNode.gain.cancelScheduledValues(currentTime);
-    if (updateMs <= 0) {
-      gainNode.gain.value = gain;
-      oscillatorNode.frequency.value = frequency;
-    } else {
-      const updateDoneTimestamp = currentTime + updateMs / 1000.0;
-      gainNode.gain.linearRampToValueAtTime(gain, updateDoneTimestamp);
-      oscillatorNode.frequency.linearRampToValueAtTime(
-        frequency,
-        updateDoneTimestamp,
-      );
-    }
+    const updateDoneTimestamp = currentTime + updateMs / 1000.0;
+    gainNode.gain.cancelAndHoldAtTime(currentTime);
+    gainNode.gain.linearRampToValueAtTime(gain, updateDoneTimestamp);
+    oscillatorNode.frequency.linearRampToValueAtTime(
+      frequency,
+      updateDoneTimestamp,
+    );
   }
 
   remove(id: number) {
