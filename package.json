@@ -73,6 +73,7 @@
     "stylelint-config-prettier-scss": "^0.0.1",
     "stylelint-config-standard-scss": "^6.1.0",
     "typedoc": "^0.23.23",
+    "typedoc-plugin-rename-defaults": "^0.6.4",
     "typescript": "^4.9.4",
     "typescript-plugin-css-modules": "^4.1.1"
   },
@@ -89,7 +90,7 @@
     "build:lib": "npm run clean:lib && parcel build --public-url . --target main --target module --target types",
     "build:app": "npm run clean:app && parcel build --public-url . --target app",
     "format": "prettier --write '.'",
-    "doc": "typedoc --tsconfig src/tsconfig.json --entryPoints src/lib/ts/index.ts",
+    "doc": "typedoc",
     "lint": "npm run lint:scripts; npm run lint:styles",
     "lint:scripts": "cd src/ && eslint '{**/*,*}.{js,ts,jsx,tsx}'",
     "lint:styles": "cd src/ && stylelint '{**/*,*}.{css,scss}'",
