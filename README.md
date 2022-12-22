@@ -50,6 +50,11 @@ Check out `package.json` for additional `run` scripts.
 This project is using Parcel as a build system. The demo is written in HTML,
 SCSS and Typescript.
 
+## ToDo
+
+- Fix broken TypeDoc.
+- Add usage examples.
+
 ## Credits
 
 Developed by Christian Stussak for IMAGINARY gGmbH.
