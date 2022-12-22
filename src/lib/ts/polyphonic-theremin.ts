@@ -1,11 +1,12 @@
 import classes from '../scss/polyphonic-theremin.module.scss';
 import Tones, {
-  ToneOptions,
+  ToneOptions as IToneOptions,
   defaultOptions as defaultToneOptions,
 } from './tones';
 import { getRelativePointerPosition, setPosition } from './util';
 
-type PolyphonicThereminOptions = {
+export type ToneOptions = IToneOptions;
+export type PolyphonicThereminOptions = {
   touchElementCssClasses: string[];
   touchElementStyle: string;
 };
@@ -24,7 +25,7 @@ function queryForPointerIdAll<T extends Element>(
   );
 }
 
-class PolyphonicTheremin {
+export default class PolyphonicTheremin {
   protected readonly _options: PolyphonicThereminOptions;
 
   protected tones: Tones;
@@ -140,10 +141,4 @@ class PolyphonicTheremin {
   }
 }
 
-export {
-  PolyphonicThereminOptions,
-  ToneOptions,
-  defaultOptions,
-  defaultToneOptions,
-};
-export default PolyphonicTheremin;
+export { defaultOptions, defaultToneOptions };

@@ -5,7 +5,7 @@ import {
   cancelAndHoldNow,
 } from './util';
 
-interface ToneData {
+export interface ToneData {
   tGain: number;
   tFrequency: number;
 }

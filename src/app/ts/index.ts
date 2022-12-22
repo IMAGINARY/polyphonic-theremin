@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 
 import fullscreenIconSvg from 'bundle-text:../svg/fullscreen.svg';
 import fullscreenExitIconSvg from 'bundle-text:../svg/fullscreen-exit.svg';
-import PolyphonicTheremin from '../../lib/ts/polyphonic-theremin';
+import PolyphonicTheremin from '../../lib/ts/index';
 
 const outer = document.getElementById('theremin');
 assert(outer !== null);
