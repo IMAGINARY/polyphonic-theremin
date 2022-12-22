@@ -184,12 +184,17 @@ class Tones {
     const { updateMs } = this.options;
     const { currentTime } = this.audioContext;
     const updateDoneTimestamp = currentTime + updateMs / 1000.0;
-    gainNode.gain.cancelAndHoldAtTime(currentTime);
-    gainNode.gain.linearRampToValueAtTime(gain, updateDoneTimestamp);
-    oscillatorNode.frequency.linearRampToValueAtTime(
-      frequency,
-      updateDoneTimestamp,
-    );
+    const gainParam = gainNode.gain;
+    const frequencyParam = oscillatorNode.frequency;
+    cancelAndHoldNow(gainParam, this.audioContext);
+    cancelAndHoldNow(frequencyParam, this.audioContext);
+    gainParam.linearRampToValueAtTime(gain, updateDoneTimestamp);
+
+    // Use exponential ramp if available and linear ramp otherwise.
+    const frequencyRamp =
+      frequencyParam.exponentialRampToValueAtTime.bind(frequencyParam) ??
+      frequencyParam.linearRampToValueAtTime.bind(frequencyParam);
+    frequencyRamp(frequency, updateDoneTimestamp);
   }
 
   remove(id: number) {
