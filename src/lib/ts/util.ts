@@ -26,8 +26,7 @@ function getRelativePointerPosition(pe: PointerEvent, elem: HTMLElement) {
 
 function setPosition(element: HTMLElement, x: number, y: number) {
   const { style } = element;
-  style.left = `${x}px`;
-  style.top = `${y}px`;
+  style.transform = `translate(${x}px, ${y}px)`;
 }
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;

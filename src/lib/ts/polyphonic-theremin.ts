@@ -63,6 +63,8 @@ export default class PolyphonicTheremin {
     const { relX, relY } = getRelativePointerPosition(pe, this.pane);
 
     const internalElem = document.createElement('div');
+    internalElem.classList.add(classes.ring);
+
     const elem = document.createElement('div');
     elem.classList.add(classes.pointer);
     elem.dataset.pointerId = `${pe.pointerId}`;

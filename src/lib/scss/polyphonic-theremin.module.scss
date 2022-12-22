@@ -13,11 +13,9 @@
 
 .pointer {
   position: absolute;
-  width: 0;
-  height: 0;
 }
 
-.pointer > * {
+.pointer > .ring {
   margin: 0;
   position: absolute;
   top: 50%;
