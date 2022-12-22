@@ -10,7 +10,7 @@ npm install polyphonic-theremin
 
 ## Usage
 
-Take a look at the `src` folder.
+Take a look at the `docs` and `src` folders.
 
 ## Build
 
