@@ -1,15 +1,15 @@
 {
-  "name": "typescript-library-with-demo-app",
+  "name": "polyphonic-theremin",
   "version": "0.0.0",
-  "description": "Template for TypeScript library with demo app",
+  "description": "A multi-touch operated polyphonic Theremin",
   "author": {
-    "name": "author-name",
-    "email": "author-email"
+    "name": "Christian Stussak",
+    "email": "christian-stussak@imaginary.org"
   },
-  "repository": "",
+  "repository": "https://github.com/IMAGINARY/polyphonic-theremin",
   "bugs": {
-    "url": "issue-tracker",
-    "email": "author-email"
+    "url": "https://github.com/IMAGINARY/polyphonic-theremin/issues",
+    "email": "christian-stussak@imaginary.org"
   },
   "license": "MIT",
   "engines": {
