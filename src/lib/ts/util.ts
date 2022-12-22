@@ -31,6 +31,18 @@ function setPosition(element: HTMLElement, x: number, y: number) {
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
+/**
+ * This is a workaround for some browsers not supporting
+ * AudioParam.cancelAndHoldAtTime().
+ */
+function cancelAndHoldNow(audioParam: AudioParam, audioContext: AudioContext) {
+  const { currentTime } = audioContext;
+  const { value } = audioParam;
+  audioParam.cancelScheduledValues(currentTime);
+  // eslint-disable-next-line no-param-reassign
+  audioParam.value = value;
+}
+
 export {
   hasKey,
   interpolateLinear,
@@ -38,4 +50,5 @@ export {
   getRelativePointerPosition,
   setPosition,
   AudioContext,
+  cancelAndHoldNow,
 };

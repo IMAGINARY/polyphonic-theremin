@@ -3,6 +3,7 @@ import {
   interpolateLinear,
   interpolateLogarithmic,
   AudioContext,
+  cancelAndHoldNow,
 } from './util';
 
 interface ToneData {
@@ -33,6 +34,7 @@ type ToneOptions = {
   attackMs: number;
   releaseMs: number;
   updateMs: number;
+  mute: boolean;
 };
 
 const defaultToneOptions: Readonly<ToneOptions> = {
@@ -44,6 +46,7 @@ const defaultToneOptions: Readonly<ToneOptions> = {
   attackMs: 10,
   releaseMs: 200,
   updateMs: 10,
+  mute: false,
 };
 
 class Tones {
@@ -54,6 +57,8 @@ class Tones {
   protected releasingToneObjects: Set<ToneDataWithNodes>;
 
   protected audioContext: AudioContext;
+
+  protected globalGain: GainNode;
 
   protected needsRefresh: boolean;
 
@@ -68,7 +73,17 @@ class Tones {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,no-param-reassign
         target[key] = newValue;
-        if (hasKey(optionsWithDefaults, key)) this.scheduleRefresh();
+        if (hasKey(optionsWithDefaults, key)) {
+          switch (key) {
+            case 'mute':
+              this.applyMute();
+              break;
+            default:
+              this.scheduleRefresh();
+              break;
+          }
+        }
+
         return true;
       },
     });
@@ -76,6 +91,10 @@ class Tones {
     this.toneObjects = new Map();
     this.releasingToneObjects = new Set();
     this.audioContext = new AudioContext();
+    this.globalGain = this.audioContext.createGain();
+    this.globalGain.gain.value = 0.0;
+    this.globalGain.connect(this.audioContext.destination);
+    this.applyMute();
     this.needsRefresh = false;
   }
 
@@ -97,7 +116,7 @@ class Tones {
     // create envelope Gain node
     const envelopeGainNode = this.audioContext.createGain();
     envelopeGainNode.gain.value = 0;
-    envelopeGainNode.connect(this.audioContext.destination);
+    envelopeGainNode.connect(this.globalGain);
 
     // create Gain node
     const gainNode = this.audioContext.createGain();
@@ -219,6 +238,15 @@ class Tones {
     }
 
     return false;
+  }
+
+  protected applyMute() {
+    const { currentTime } = this.audioContext;
+    const { gain } = this.globalGain;
+    const updateDoneTimestamp = currentTime + 0.02;
+    const targetGain = this.options.mute ? 0.0 : 1.0;
+    cancelAndHoldNow(gain, this.audioContext);
+    gain.linearRampToValueAtTime(targetGain, updateDoneTimestamp);
   }
 }
 
