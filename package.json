@@ -1,5 +1,5 @@
 {
-  "name": "polyphonic-theremin",
+  "name": "@imaginary-maths/polyphonic-theremin",
   "version": "0.0.0",
   "description": "A multi-touch operated polyphonic Theremin",
   "author": {
