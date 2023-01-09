@@ -102,7 +102,7 @@
   "scripts": {
     "serve": "parcel serve --dist-dir dist-dev --target app",
     "watch:app": "parcel watch --target app",
-    "watch:muski": "parcel watch --target muski",
+    "watch:muski": "parcel watch --no-hmr --target muski --target muski-min",
     "clean": "npm run clean:lib && npm run clean:app && npm run clean:muski",
     "clean:lib": "rimraf dist/index.*",
     "clean:app": "rimraf app",
