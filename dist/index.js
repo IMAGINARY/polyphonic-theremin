@@ -52,15 +52,15 @@ $parcel$export($75f0e964df14042f$exports, "defaultToneOptions", function () { re
 
 var $ee19f5e752fbd243$exports = {};
 
-$parcel$export($ee19f5e752fbd243$exports, "pointer", function () { return $ee19f5e752fbd243$export$b7fd2c2937973304; }, function (v) { return $ee19f5e752fbd243$export$b7fd2c2937973304 = v; });
 $parcel$export($ee19f5e752fbd243$exports, "ring", function () { return $ee19f5e752fbd243$export$e7d0da6968da5dd; }, function (v) { return $ee19f5e752fbd243$export$e7d0da6968da5dd = v; });
 $parcel$export($ee19f5e752fbd243$exports, "pane", function () { return $ee19f5e752fbd243$export$6dff30574f79a202; }, function (v) { return $ee19f5e752fbd243$export$6dff30574f79a202 = v; });
-var $ee19f5e752fbd243$export$b7fd2c2937973304;
+$parcel$export($ee19f5e752fbd243$exports, "pointer", function () { return $ee19f5e752fbd243$export$b7fd2c2937973304; }, function (v) { return $ee19f5e752fbd243$export$b7fd2c2937973304 = v; });
 var $ee19f5e752fbd243$export$e7d0da6968da5dd;
 var $ee19f5e752fbd243$export$6dff30574f79a202;
-$ee19f5e752fbd243$export$b7fd2c2937973304 = "GmrByW_pointer";
+var $ee19f5e752fbd243$export$b7fd2c2937973304;
 $ee19f5e752fbd243$export$e7d0da6968da5dd = "GmrByW_ring";
 $ee19f5e752fbd243$export$6dff30574f79a202 = "GmrByW_pane";
+$ee19f5e752fbd243$export$b7fd2c2937973304 = "GmrByW_pointer";
 
 
 
@@ -345,6 +345,7 @@ var $75f0e964df14042f$export$2e2bcd8739ae039 = /*#__PURE__*/ function() {
         (0, ($parcel$interopDefault($49SJR$swchelperslib_define_propertyjs)))(this, "pane", void 0);
         this._options = (0, ($parcel$interopDefault($49SJR$swchelperslib_object_spreadjs)))({}, $75f0e964df14042f$export$ba43bf67f3d48107, options);
         var pane = document.createElement("div");
+        pane.setAttribute("touch-action", "none"); // for Pointer Events Polyfill
         pane.classList.add((0, (/*@__PURE__*/$parcel$interopDefault($ee19f5e752fbd243$exports))).pane);
         pane.addEventListener("pointerdown", this.handlers.addPointer);
         pane.addEventListener("pointerup", this.handlers.removePointer);
@@ -402,8 +403,10 @@ var $75f0e964df14042f$export$2e2bcd8739ae039 = /*#__PURE__*/ function() {
                 this.pane.setPointerCapture(pe.pointerId);
                 var _getRelativePointerPosition = (0, $aba086a96c3a6af4$export$79263550b33b988b)(pe, this.pane), relX = _getRelativePointerPosition.relX, relY = _getRelativePointerPosition.relY;
                 var internalElem = document.createElement("div");
+                internalElem.setAttribute("touch-action", "none"); // for Pointer Events Polyfill
                 this.refreshPointerElementCss(internalElem);
                 var elem = document.createElement("div");
+                elem.setAttribute("touch-action", "none"); // for Pointer Events Polyfill
                 elem.classList.add((0, (/*@__PURE__*/$parcel$interopDefault($ee19f5e752fbd243$exports))).pointer);
                 elem.dataset.pointerId = "".concat(pe.pointerId);
                 elem.appendChild(internalElem);

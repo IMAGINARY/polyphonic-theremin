@@ -22,15 +22,15 @@ $parcel$export($5659b36a18e30c2e$exports, "defaultToneOptions", function () { re
 
 var $f856531edfd933e8$exports = {};
 
-$parcel$export($f856531edfd933e8$exports, "ring", function () { return $f856531edfd933e8$export$e7d0da6968da5dd; }, function (v) { return $f856531edfd933e8$export$e7d0da6968da5dd = v; });
 $parcel$export($f856531edfd933e8$exports, "pane", function () { return $f856531edfd933e8$export$6dff30574f79a202; }, function (v) { return $f856531edfd933e8$export$6dff30574f79a202 = v; });
 $parcel$export($f856531edfd933e8$exports, "pointer", function () { return $f856531edfd933e8$export$b7fd2c2937973304; }, function (v) { return $f856531edfd933e8$export$b7fd2c2937973304 = v; });
-var $f856531edfd933e8$export$e7d0da6968da5dd;
+$parcel$export($f856531edfd933e8$exports, "ring", function () { return $f856531edfd933e8$export$e7d0da6968da5dd; }, function (v) { return $f856531edfd933e8$export$e7d0da6968da5dd = v; });
 var $f856531edfd933e8$export$6dff30574f79a202;
 var $f856531edfd933e8$export$b7fd2c2937973304;
-$f856531edfd933e8$export$e7d0da6968da5dd = `GmrByW_ring`;
+var $f856531edfd933e8$export$e7d0da6968da5dd;
 $f856531edfd933e8$export$6dff30574f79a202 = `GmrByW_pane`;
 $f856531edfd933e8$export$b7fd2c2937973304 = `GmrByW_pointer`;
+$f856531edfd933e8$export$e7d0da6968da5dd = `GmrByW_ring`;
 
 
 
@@ -287,8 +287,10 @@ class $5659b36a18e30c2e$export$2e2bcd8739ae039 {
         this.pane.setPointerCapture(pe.pointerId);
         const { relX: relX , relY: relY  } = (0, $12f1dd3205f197c4$export$79263550b33b988b)(pe, this.pane);
         const internalElem = document.createElement("div");
+        internalElem.setAttribute("touch-action", "none"); // for Pointer Events Polyfill
         this.refreshPointerElementCss(internalElem);
         const elem = document.createElement("div");
+        elem.setAttribute("touch-action", "none"); // for Pointer Events Polyfill
         elem.classList.add((0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).pointer);
         elem.dataset.pointerId = `${pe.pointerId}`;
         elem.appendChild(internalElem);
@@ -332,6 +334,7 @@ class $5659b36a18e30c2e$export$2e2bcd8739ae039 {
             ...options
         };
         const pane = document.createElement("div");
+        pane.setAttribute("touch-action", "none"); // for Pointer Events Polyfill
         pane.classList.add((0, (/*@__PURE__*/$parcel$interopDefault($f856531edfd933e8$exports))).pane);
         pane.addEventListener("pointerdown", this.handlers.addPointer);
         pane.addEventListener("pointerup", this.handlers.removePointer);

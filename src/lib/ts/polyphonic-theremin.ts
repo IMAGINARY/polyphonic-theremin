@@ -44,6 +44,7 @@ export default class PolyphonicTheremin {
     this._options = { ...defaultOptions, ...options };
 
     const pane = document.createElement('div');
+    pane.setAttribute('touch-action', 'none'); // for Pointer Events Polyfill
     pane.classList.add(classes.pane);
     pane.addEventListener('pointerdown', this.handlers.addPointer);
     pane.addEventListener('pointerup', this.handlers.removePointer);
@@ -93,9 +94,11 @@ export default class PolyphonicTheremin {
     const { relX, relY } = getRelativePointerPosition(pe, this.pane);
 
     const internalElem = document.createElement('div');
+    internalElem.setAttribute('touch-action', 'none'); // for Pointer Events Polyfill
     this.refreshPointerElementCss(internalElem);
 
     const elem = document.createElement('div');
+    elem.setAttribute('touch-action', 'none'); // for Pointer Events Polyfill
     elem.classList.add(classes.pointer);
     elem.dataset.pointerId = `${pe.pointerId}`;
     elem.appendChild(internalElem);
