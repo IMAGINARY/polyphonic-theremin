@@ -96,8 +96,7 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "dependencies": {
-    "@swc/helpers": "^0.4.14",
-    "pepjs": "^0.5.3"
+    "@swc/helpers": "^0.4.14"
   },
   "scripts": {
     "serve": "parcel serve --dist-dir dist-dev --target app",

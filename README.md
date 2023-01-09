@@ -8,6 +8,10 @@ Install the package via `npm`:
 npm install @imaginary-maths/polyphonic-theremin
 ```
 
+This component relies on `PointerEvent` internally for a unified handling of
+touch and mouse input. To support older browsers, you may add the
+[Pointer Events Polyfill](https://www.npmjs.com/package/pepjs) to your project.
+
 ## Usage
 
 Take a look at the `docs` and `src` folders.
