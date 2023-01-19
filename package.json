@@ -17,7 +17,16 @@
     "node": ">=16.0.0"
   },
   "browserslist": [
-    "> 0.2% and not dead"
+    ">= 0.5%",
+    "last 2 major versions",
+    "not dead",
+    "Chrome >= 60",
+    "Firefox >= 60",
+    "Firefox ESR",
+    "iOS >= 12",
+    "Safari >= 12",
+    "not Explorer <= 11",
+    "not OperaMini all"
   ],
   "source": "src/lib/ts/index.ts",
   "main": "dist/index.js",
@@ -64,11 +73,11 @@
     "dist"
   ],
   "devDependencies": {
-    "@parcel/packager-ts": "2.8.2",
-    "@parcel/transformer-inline-string": "2.8.2",
-    "@parcel/transformer-sass": "2.8.2",
-    "@parcel/transformer-typescript-tsc": "2.8.2",
-    "@parcel/transformer-typescript-types": "2.8.2",
+    "@parcel/packager-ts": "2.8.3",
+    "@parcel/transformer-inline-string": "2.8.3",
+    "@parcel/transformer-sass": "2.8.3",
+    "@parcel/transformer-typescript-tsc": "2.8.3",
+    "@parcel/transformer-typescript-types": "2.8.3",
     "@types/assert": "^1.5.6",
     "@types/document-ready": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
@@ -81,7 +90,7 @@
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "parcel": "2.8.2",
+    "parcel": "2.8.3",
     "parcel-namer-rewrite": "^2.0.0-rc.3",
     "prettier": "^2.8.1",
     "process": "^0.11.10",
