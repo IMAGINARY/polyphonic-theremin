@@ -1,5 +1,7 @@
 # polyphonic-theremin
 
+A multi-touch operated polyphonic Theremin for embedding in your projects.
+
 ## Installation
 
 Install the package via `npm`:
